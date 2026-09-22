@@ -11,6 +11,7 @@ import {
     type EventFormValues,
 } from "@/lib/event-form";
 import { saveEvent, type SaveState } from "@/app/admin/events/actions";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 const initial: SaveState = { status: "idle" };
 
@@ -221,25 +222,24 @@ export function EventForm({ defaults }: { defaults: EventFormDefaults }) {
 
             <section className="grid gap-5">
                 <h2 className="text-lg font-semibold">Photos</h2>
-                <Field
-                    id="imageUrl"
-                    label="Main photo"
-                    error={errors.imageUrl}
-                    hint="A path like /images/photo.jpg, or a full https:// link."
-                >
-                    <input id="imageUrl" name="imageUrl" defaultValue={defaults.imageUrl} className={inputClass} />
+                <Field id="imageUrl" label="Main photo" error={errors.imageUrl}>
+                    <ImageUploader
+                        name="imageUrl"
+                        folder="events"
+                        initialUrls={defaults.imageUrl ? [defaults.imageUrl] : []}
+                    />
                 </Field>
                 <Field
                     id="galleryImages"
-                    label="Extra photos for the event page (one per line)"
+                    label="Extra photos for the event page"
                     error={errors.galleryImages}
                 >
-                    <textarea
-                        id="galleryImages"
+                    <ImageUploader
                         name="galleryImages"
-                        rows={3}
-                        defaultValue={defaults.galleryImages.join("\n")}
-                        className={`${inputClass} resize-y font-meta`}
+                        folder="events"
+                        initialUrls={defaults.galleryImages}
+                        multiple
+                        max={12}
                     />
                 </Field>
             </section>
