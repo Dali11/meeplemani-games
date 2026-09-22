@@ -31,54 +31,59 @@ export default async function EditColoringCategoryPage({
                 <h1 className="text-3xl font-bold tracking-tight">{category.title}</h1>
                 {category.status === "published" && (
 
-                <a    href = "/coloring-books"
+                    <a href="/coloring-books"
                         target="_blank"
-                rel="noopener noreferrer"
-                className="text-[15px] text-lamp underline underline-offset-4"
+                        rel="noopener noreferrer"
+                        className="text-[15px] text-lamp underline underline-offset-4"
                     >
-                View live page
-            </a>
+                        View live page
+                    </a>
                 )}
-        </div>
+            </div>
 
             {
-        created === "1" && (
-            <p role="status" className="mt-4 max-w-3xl rounded-xl border border-mint/40 bg-mint/10 px-4 py-3 text-[15px]">
-                Category created.
-            </p>
-        )
-    }
+                created === "1" && (
+                    <p role="status" className="mt-4 max-w-3xl rounded-xl border border-mint/40 bg-mint/10 px-4 py-3 text-[15px]">
+                        Category created.
+                    </p>
+                )
+            }
 
-    <div className="mt-8 max-w-3xl">
-        <ColoringForm
-            defaults={{
-                id: category.id,
-                title: category.title,
-                slug: category.slug,
-                description: category.description ?? "",
-                imageUrl: category.imageUrl ?? "",
-                downloadUrl: category.downloadUrl ?? "",
-                status: category.status,
-                sortOrder: category.sortOrder,
-            }}
-        />
+            <div className="mt-8 max-w-3xl">
+                <ColoringForm
+                    defaults={{
+                        id: category.id,
+                        title: category.title,
+                        slug: category.slug,
+                        description: category.description ?? "",
+                        imageUrl: category.imageUrl ?? "",
+                        downloadUrl: category.downloadUrl ?? "",
+                        status: category.status,
+                        sortOrder: category.sortOrder,
+                        ageRange: category.ageRange ?? "",
+                        pageCount: category.pageCount != null ? String(category.pageCount) : "",
+                        difficulty: category.difficulty ?? "",
+                        badge: category.badge ?? "",
+                        priceMwk: category.priceMwk != null ? String(category.priceMwk) : "",
+                    }}
+                />
 
-        <details className="mt-8 border-t border-line pt-6 text-[14px]">
-            <summary className="w-fit cursor-pointer list-none text-dim transition-colors hover:text-pink [&::-webkit-details-marker]:hidden">
-                Delete this category
-            </summary>
-            <form action={deleteColoringCategory} className="mt-3 flex items-center gap-3">
-                <input type="hidden" name="id" value={category.id} />
-                <span className="text-muted">This removes it from the site. This cannot be undone.</span>
-                <button
-                    type="submit"
-                    className="rounded-full border border-pink/60 px-4 py-1.5 text-pink transition-colors hover:bg-pink/10"
-                >
-                    Yes, delete it
-                </button>
-            </form>
-        </details>
-    </div>
+                <details className="mt-8 border-t border-line pt-6 text-[14px]">
+                    <summary className="w-fit cursor-pointer list-none text-dim transition-colors hover:text-pink [&::-webkit-details-marker]:hidden">
+                        Delete this category
+                    </summary>
+                    <form action={deleteColoringCategory} className="mt-3 flex items-center gap-3">
+                        <input type="hidden" name="id" value={category.id} />
+                        <span className="text-muted">This removes it from the site. This cannot be undone.</span>
+                        <button
+                            type="submit"
+                            className="rounded-full border border-pink/60 px-4 py-1.5 text-pink transition-colors hover:bg-pink/10"
+                        >
+                            Yes, delete it
+                        </button>
+                    </form>
+                </details>
+            </div>
         </div >
     );
 }

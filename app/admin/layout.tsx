@@ -30,6 +30,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                                 <Link href="/admin/coloring" className="text-cream">
                                     Coloring books
                                 </Link>
+                                <Link href="/admin/coloring-wall" className="text-cream">
+                                    Coloring wall
+                                </Link>
                             </nav>
                         )}
                     </div>

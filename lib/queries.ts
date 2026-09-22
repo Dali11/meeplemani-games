@@ -1,7 +1,13 @@
-import { and, asc, eq, ne } from "drizzle-orm";
+import { and, asc, eq, isNotNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { EVENTS, type EventCategory, type EventItem } from "@/lib/events";
-import { coloringCategories, events, galleryImages, type EventRow } from "@/db/schema";
+import {
+    coloringCategories,
+    coloringSubmissions,
+    events,
+    galleryImages,
+    type EventRow,
+} from "@/db/schema";
 
 /** Events shown on the public site, in the order set by sort_order */
 export async function getPublishedEvents() {
@@ -111,4 +117,27 @@ export async function getColoringCategories() {
         .from(coloringCategories)
         .where(eq(coloringCategories.status, "published"))
         .orderBy(asc(coloringCategories.sortOrder));
+}
+
+/** Categories with a PDF ready to download, for the "download all" bundle */
+export async function getDownloadableColoringCategories() {
+    return db
+        .select()
+        .from(coloringCategories)
+        .where(
+            and(
+                eq(coloringCategories.status, "published"),
+                isNotNull(coloringCategories.downloadUrl),
+            ),
+        )
+        .orderBy(asc(coloringCategories.sortOrder));
+}
+
+/** Published "show us your masterpiece" photos, newest first */
+export async function getColoringSubmissions() {
+    return db
+        .select()
+        .from(coloringSubmissions)
+        .where(eq(coloringSubmissions.status, "published"))
+        .orderBy(asc(coloringSubmissions.sortOrder));
 }

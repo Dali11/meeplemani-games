@@ -151,7 +151,29 @@ export const coloringCategories = pgTable(
 );
 
 
+export const coloringSubmissions = pgTable(
+    "coloring_submissions",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        // Whoever coloured the page, e.g. "Amara" + "5" shows as "Amara, age 5"
+        childName: text("child_name"),
+        childAge: text("child_age"),
+        imageUrl: text("image_url").notNull(),
+        // Photos come in over WhatsApp and are added here by an admin, so
+        // "draft" simply means "not on the site yet" rather than a public queue.
+        status: text("status").notNull().default("draft"),
+        sortOrder: integer("sort_order").notNull().default(0),
+        ...timestamps,
+    },
+    (t) => [
+        index("idx_coloring_submissions_status").on(t.status),
+        index("idx_coloring_submissions_sort_order").on(t.sortOrder),
+    ],
+);
+
 export type EventRow = typeof events.$inferSelect;
 export type NewEventRow = typeof events.$inferInsert;
 export type ColoringCategoryRow = typeof coloringCategories.$inferSelect;
 export type NewColoringCategoryRow = typeof coloringCategories.$inferInsert;
+export type ColoringSubmissionRow = typeof coloringSubmissions.$inferSelect;
+export type NewColoringSubmissionRow = typeof coloringSubmissions.$inferInsert;

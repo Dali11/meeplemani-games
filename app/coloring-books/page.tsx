@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Pill } from "@/components/ui/Pill";
-import { getColoringCategories } from "@/lib/queries";
+
+import { getColoringCategories, getColoringSubmissions } from "@/lib/queries";
 import { whatsappLink } from "@/lib/site";
+import { MasterpieceWall } from "@/components/coloring/MasterpieceWall";
+import { ColoringCatalog } from "@/components/coloring/ColoringCatalog";
 
 export const metadata: Metadata = {
     title: "Coloring books",
@@ -13,27 +15,31 @@ export const metadata: Metadata = {
 // Refresh from the database at most every 5 minutes
 export const revalidate = 300;
 
-const FALLBACK_IMAGE = "/images/bg-home-hero.jpg";
-
-function DownloadIcon() {
-    return (
-        <svg
-            viewBox="0 0 24 24"
-            className="size-4.5 shrink-0"
-            fill="none"
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-        >
-            <path d="M12 4v11m0 0-4-4m4 4 4-4" />
-            <path d="M4 17.5V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5" />
-        </svg>
-    );
-}
+const STEPS = [
+    {
+        number: 1,
+        title: "Download",
+        text: "Tap a ready set above to grab the PDF — no sign-up needed.",
+    },
+    {
+        number: 2,
+        title: "Print",
+        text: "Works on any home printer. Card stock holds up best for younger colorists.",
+    },
+    {
+        number: 3,
+        title: "Color & show us",
+        text: "Send us a photo — we love adding pages to the wall below.",
+    },
+];
 
 export default async function ColoringBooksPage() {
-    const categories = await getColoringCategories().catch(() => []);
+    const [categories, submissions] = await Promise.all([
+        getColoringCategories().catch(() => []),
+        getColoringSubmissions().catch(() => []),
+    ]);
+
+    const downloadableCount = categories.filter((c) => c.downloadUrl).length;
 
     return (
         <>
@@ -57,84 +63,89 @@ export default async function ColoringBooksPage() {
                         id="categories-title"
                         className="text-[clamp(1.75rem,3.4vw,2.4rem)] font-semibold leading-[1.1] tracking-tight"
                     >
-                        Pick a set
+                        Pick a favorite
                     </h2>
+                    <p className="mt-2 max-w-xl text-[16.5px] text-muted">
+                        {categories.length > 0
+                            ? "All free to download — more sets added after every event."
+                            : "Coloring pages are on the way. Check back soon."}
+                    </p>
 
-                    {categories.length === 0 ? (
-                        <p className="mt-8 rounded-2xl border border-dashed border-line-strong p-8 text-muted">
-                            Coloring pages are on the way. Check back soon.
-                        </p>
-                    ) : (
-                        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                            {categories.map((category) => (
-                                <div
-                                    key={category.id}
-                                    className="flex flex-col overflow-hidden rounded-[22px] border border-line bg-plum"
-                                >
-                                    <div className="relative aspect-4/3 bg-ink">
-                                        <Image
-                                            src={category.imageUrl ?? FALLBACK_IMAGE}
-                                            alt=""
-                                            fill
-                                            sizes="(min-width: 1024px) 280px, 45vw"
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                    <div className="flex flex-1 flex-col gap-3 p-5">
-                                        <div>
-                                            <h3 className="text-lg font-semibold tracking-tight">
-                                                {category.title}
-                                            </h3>
-                                            {category.description && (
-                                                <p className="mt-1.5 text-[15px] text-muted">
-                                                    {category.description}
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        <div className="mt-auto pt-2">
-                                            {category.downloadUrl ? (
-                                                <Pill
-                                                    href={category.downloadUrl}
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="w-full"
-                                                >
-                                                    <DownloadIcon />
-                                                    Download PDF
-                                                </Pill>
-                                            ) : (
-                                                <span className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-dashed border-line-strong px-4.5 text-[15px] text-dim">
-                                                    Coming soon
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                    {categories.length > 0 && (
+                        <div className="mt-8">
+                            <ColoringCatalog categories={categories} downloadableCount={downloadableCount} />
                         </div>
                     )}
                 </div>
             </section>
 
-            <section className="py-16 lg:py-20">
-                <div className="wrap flex flex-col items-start gap-5 rounded-[28px] border border-line bg-plum p-8 lg:flex-row lg:items-center lg:justify-between lg:p-12">
-                    <div>
-                        <h2 className="text-2xl font-semibold tracking-tight">
-                            Want printed copies at your event?
-                        </h2>
-                        <p className="mt-2 max-w-lg text-[16.5px] text-muted">
-                            We bring printed coloring books and crayons to Kids Fun Days and
-                            family events. Message us to arrange a set for your next one.
-                        </p>
-                    </div>
-                    <Pill
-                        href={whatsappLink("Hi MeepleMania, I'd like printed coloring books for an event.")}
-                        variant="wa"
-                        className="w-full lg:w-auto"
+            <section aria-labelledby="how-title" className="border-b border-line py-16 lg:py-24">
+                <div className="wrap">
+                    <h2
+                        id="how-title"
+                        className="text-[clamp(1.75rem,3.4vw,2.4rem)] font-semibold leading-[1.1] tracking-tight"
                     >
-                        Ask on WhatsApp
-                    </Pill>
+                        How it works
+                    </h2>
+
+                    <div className="mt-8 grid gap-5 sm:grid-cols-3">
+                        {STEPS.map((step) => (
+                            <div key={step.number} className="rounded-[22px] border border-line bg-plum p-6">
+                                <span className="flex size-9 items-center justify-center rounded-full border border-lamp/40 bg-lamp/10 font-meta text-[15px] font-semibold text-lamp">
+                                    {step.number}
+                                </span>
+                                <h3 className="mt-4 text-lg font-semibold">{step.title}</h3>
+                                <p className="mt-2 text-[15.5px] text-muted">{step.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <MasterpieceWall photos={submissions} />
+
+            <section className="py-16 lg:py-20">
+                <div className="wrap">
+                    <h2 className="text-[clamp(1.75rem,3.4vw,2.4rem)] font-semibold leading-[1.1] tracking-tight">
+                        Two ways to get more
+                    </h2>
+
+                    <div className="mt-8 grid gap-5 sm:grid-cols-2">
+                        <div className="flex flex-col items-start gap-4 rounded-[28px] border border-line bg-plum p-8">
+                            <div>
+                                <h3 className="text-xl font-semibold tracking-tight">
+                                    Printed copies at your event
+                                </h3>
+                                <p className="mt-2 text-[16px] text-muted">
+                                    We bring printed coloring books and crayons to Kids Fun Days and
+                                    family events. Message us to arrange a set for your next one.
+                                </p>
+                            </div>
+                            <Pill
+                                href={whatsappLink(
+                                    "Hi MeepleMania, I'd like printed coloring books for an event.",
+                                )}
+                                variant="wa"
+                            >
+                                Ask on WhatsApp
+                            </Pill>
+                        </div>
+
+                        <div className="flex flex-col items-start gap-4 rounded-[28px] border border-line bg-plum p-8">
+                            <div>
+                                <h3 className="text-xl font-semibold tracking-tight">
+                                    Book a coloring corner
+                                </h3>
+                                <p className="mt-2 text-[16px] text-muted">
+                                    A staffed coloring table for your party, school event or corporate
+                                    family day — sets, crayons and a helper included.
+                                </p>
+                            </div>
+                            <Pill href="/contact?topic=coloring#message" variant="lamp">
+                                Get a quote
+                            </Pill>
+                        </div>
+                    </div>
                 </div>
             </section>
         </>

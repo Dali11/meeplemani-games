@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { COLORING_STATUSES } from "@/lib/coloring-form";
+import { COLORING_BADGES, COLORING_DIFFICULTIES, COLORING_STATUSES } from "@/lib/coloring-form";
 import { saveColoringCategory, type SaveState } from "@/app/admin/coloring/actions";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { slugify } from "@/lib/event-form";
@@ -25,6 +25,11 @@ export type ColoringFormDefaults = {
     downloadUrl: string;
     status: string;
     sortOrder: number | null;
+    ageRange: string;
+    pageCount: string;
+    difficulty: string;
+    badge: string;
+    priceMwk: string;
 };
 
 function Field({
@@ -165,6 +170,85 @@ export function ColoringForm({ defaults }: { defaults: ColoringFormDefaults }) {
                         className={inputClass}
                     />
                 </Field>
+            </section>
+
+            <section className="grid gap-5">
+                <h2 className="text-lg font-semibold">Catalog details</h2>
+                <p className="-mt-2 text-[14px] text-muted">
+                    Shown on the store-style grid: age, page count, difficulty pips, a New/Popular
+                    ribbon and a price tag (leave blank for a &ldquo;Free&rdquo; tag).
+                </p>
+                <div className="grid gap-5 sm:grid-cols-3">
+                    <Field
+                        id="ageRange"
+                        label="Age range (optional)"
+                        error={errors.ageRange}
+                        hint="For example 3–6 or 8+"
+                    >
+                        <input
+                            id="ageRange"
+                            name="ageRange"
+                            defaultValue={defaults.ageRange}
+                            placeholder="3–6"
+                            className={inputClass}
+                        />
+                    </Field>
+                    <Field id="pageCount" label="Page count (optional)" error={errors.pageCount}>
+                        <input
+                            id="pageCount"
+                            name="pageCount"
+                            inputMode="numeric"
+                            defaultValue={defaults.pageCount}
+                            placeholder="8"
+                            className={inputClass}
+                        />
+                    </Field>
+                    <Field id="difficulty" label="Difficulty" error={errors.difficulty}>
+                        <select
+                            id="difficulty"
+                            name="difficulty"
+                            defaultValue={defaults.difficulty}
+                            className={`${inputClass} [&>option]:bg-plum [&>option]:text-cream`}
+                        >
+                            {COLORING_DIFFICULTIES.map((d) => (
+                                <option key={d.value} value={d.value}>
+                                    {d.label}
+                                </option>
+                            ))}
+                        </select>
+                    </Field>
+                </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                    <Field id="badge" label="Ribbon badge" error={errors.badge}>
+                        <select
+                            id="badge"
+                            name="badge"
+                            defaultValue={defaults.badge}
+                            className={`${inputClass} [&>option]:bg-plum [&>option]:text-cream`}
+                        >
+                            {COLORING_BADGES.map((b) => (
+                                <option key={b.value} value={b.value}>
+                                    {b.label}
+                                </option>
+                            ))}
+                        </select>
+                    </Field>
+                    <Field
+                        id="priceMwk"
+                        label="Price in MWK (optional)"
+                        error={errors.priceMwk}
+                        hint='Leave blank to show a "Free" tag.'
+                    >
+                        <input
+                            id="priceMwk"
+                            name="priceMwk"
+                            inputMode="numeric"
+                            defaultValue={defaults.priceMwk}
+                            placeholder="Leave blank if free"
+                            className={inputClass}
+                        />
+                    </Field>
+                </div>
             </section>
 
             <section className="grid gap-5">

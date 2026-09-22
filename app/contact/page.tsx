@@ -17,6 +17,7 @@ const TOPIC_FROM_LINK: Record<string, string> = {
     corporate: "Corporate team-building",
     partnership: "Partnership or sponsorship",
     media: "Media or press",
+    coloring: "Event booking",
 };
 
 const PARTNERS = [
@@ -100,93 +101,93 @@ export default async function ContactPage({
                                     <div className="min-w-0">
                                         <h2 className="text-xl font-semibold">Email</h2>
 
-                                    <a    href={`mailto:${SITE.email}`}
-                                        className="block break-all font-meta text-[15px] text-muted underline-offset-4 hover:text-cream hover:underline"
-                                    >
-                                        {SITE.email}
-                                    </a>
+                                        <a href={`mailto:${SITE.email}`}
+                                            className="block break-all font-meta text-[15px] text-muted underline-offset-4 hover:text-cream hover:underline"
+                                        >
+                                            {SITE.email}
+                                        </a>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div className="rounded-[22px] border border-line bg-plum p-6">
+                                <h2 className="text-xl font-semibold">Follow us</h2>
+                                <ul className="mt-3 divide-y divide-line">
+                                    {SOCIALS.map((s) => (
+                                        <li key={s.label}>
+
+                                            <a href={s.href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center justify-between gap-4 py-3 text-[16px] text-muted transition-colors hover:text-cream"
+                                            >
+                                                <span className="font-medium text-cream">{s.label}</span>
+                                                <span className="font-meta text-[14.5px]">{s.handle}</span>
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p className="mt-3 flex items-center gap-2 text-[15px] text-muted">
+                                    <MapPin className="size-4 shrink-0 text-dim" aria-hidden="true" />
+                                    Based in Lilongwe and Blantyre, Malawi
+                                </p>
                             </div>
                         </div>
 
-                        <div className="rounded-[22px] border border-line bg-plum p-6">
-                            <h2 className="text-xl font-semibold">Follow us</h2>
-                            <ul className="mt-3 divide-y divide-line">
-                                {SOCIALS.map((s) => (
-                                    <li key={s.label}>
-
-                                    <a    href={s.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center justify-between gap-4 py-3 text-[16px] text-muted transition-colors hover:text-cream"
-                                    >
-                                        <span className="font-medium text-cream">{s.label}</span>
-                                        <span className="font-meta text-[14.5px]">{s.handle}</span>
-                                    </a>
-                    </li>
-                  ))}
-                        </ul>
-                        <p className="mt-3 flex items-center gap-2 text-[15px] text-muted">
-                            <MapPin className="size-4 shrink-0 text-dim" aria-hidden="true" />
-                            Based in Lilongwe and Blantyre, Malawi
-                        </p>
-                    </div>
-                </div>
-
-                <div
-                    id="message"
-                    className="scroll-mt-24 rounded-[22px] border border-line bg-plum p-6 sm:p-8"
-                >
-                    <h2 className="text-2xl font-semibold tracking-tight">Send us a message</h2>
-                    <p className="mt-2 mb-6 text-[16px] text-muted">
-                        We save your message and reply by email, phone or WhatsApp.
-                    </p>
-                    {/* The key restarts the form when the topic in the link changes */}
-                    <ContactForm key={defaultTopic ?? "default"} defaultTopic={defaultTopic} />
-                </div>
-            </div>
-        </div >
-      </section >
-
-        <section aria-labelledby="partner-title" className="py-16 lg:py-24">
-            <div className="wrap">
-                <div className="flex flex-wrap items-end justify-between gap-6">
-                    <div>
-                        <h2
-                            id="partner-title"
-                            className="text-[clamp(1.75rem,3.4vw,2.4rem)] font-semibold leading-[1.1] tracking-tight"
+                        <div
+                            id="message"
+                            className="scroll-mt-24 rounded-[22px] border border-line bg-plum p-6 sm:p-8"
                         >
-                            Partner with MeepleMania
-                        </h2>
-                        <p className="mt-2 max-w-xl text-[16.5px] text-muted">
-                            We are always looking to work with venues, hospitality brands
-                            and sponsors who share our love of play.
-                        </p>
-                    </div>
-                    <Link
-                        href="/contact?topic=partnership#message"
-                        className="inline-flex min-h-11 items-center rounded-full bg-lamp px-6 font-semibold text-[#1b1206] transition-colors hover:bg-lamp-bright"
-                    >
-                        Become a partner
-                    </Link>
-                </div>
-
-                <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {PARTNERS.map((p) => (
-                        <div key={p.title} className="rounded-[22px] border border-line bg-plum p-6">
-                            <p.icon className="size-6 text-lamp" aria-hidden="true" />
-                            <h3 className="mt-4 text-lg font-semibold">{p.title}</h3>
-                            <p className="mt-2 text-[15.5px] text-muted">{p.text}</p>
+                            <h2 className="text-2xl font-semibold tracking-tight">Send us a message</h2>
+                            <p className="mt-2 mb-6 text-[16px] text-muted">
+                                We save your message and reply by email, phone or WhatsApp.
+                            </p>
+                            {/* The key restarts the form when the topic in the link changes */}
+                            <ContactForm key={defaultTopic ?? "default"} defaultTopic={defaultTopic} />
                         </div>
-                    ))}
-                </div>
+                    </div>
+                </div >
+            </section >
 
-                <p className="mt-10 flex items-center gap-2 text-[15px] text-dim">
-                    <Handshake className="size-4 shrink-0" aria-hidden="true" />
-                    Partnership messages go straight to the same inbox, so nothing gets lost.
-                </p>
-            </div>
-        </section>
-    </>
-  );
+            <section aria-labelledby="partner-title" className="py-16 lg:py-24">
+                <div className="wrap">
+                    <div className="flex flex-wrap items-end justify-between gap-6">
+                        <div>
+                            <h2
+                                id="partner-title"
+                                className="text-[clamp(1.75rem,3.4vw,2.4rem)] font-semibold leading-[1.1] tracking-tight"
+                            >
+                                Partner with MeepleMania
+                            </h2>
+                            <p className="mt-2 max-w-xl text-[16.5px] text-muted">
+                                We are always looking to work with venues, hospitality brands
+                                and sponsors who share our love of play.
+                            </p>
+                        </div>
+                        <Link
+                            href="/contact?topic=partnership#message"
+                            className="inline-flex min-h-11 items-center rounded-full bg-lamp px-6 font-semibold text-[#1b1206] transition-colors hover:bg-lamp-bright"
+                        >
+                            Become a partner
+                        </Link>
+                    </div>
+
+                    <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                        {PARTNERS.map((p) => (
+                            <div key={p.title} className="rounded-[22px] border border-line bg-plum p-6">
+                                <p.icon className="size-6 text-lamp" aria-hidden="true" />
+                                <h3 className="mt-4 text-lg font-semibold">{p.title}</h3>
+                                <p className="mt-2 text-[15.5px] text-muted">{p.text}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <p className="mt-10 flex items-center gap-2 text-[15px] text-dim">
+                        <Handshake className="size-4 shrink-0" aria-hidden="true" />
+                        Partnership messages go straight to the same inbox, so nothing gets lost.
+                    </p>
+                </div>
+            </section>
+        </>
+    );
 }
