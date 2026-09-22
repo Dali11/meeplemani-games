@@ -56,22 +56,24 @@ export default async function AdminEventsPage() {
                     {eventRows.map((e) => (
                         <li
                             key={e.id}
-                            className="flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-plum p-4"
+                            className="flex flex-col gap-3 rounded-2xl border border-line bg-plum p-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
                         >
-                            <span
-                                className={`size-2.5 shrink-0 rounded-full ${STATUS_DOT[e.status] ?? "bg-dim"}`}
-                                title={STATUS_LABEL[e.status] ?? e.status}
-                            />
-                            <div className="min-w-0 flex-1">
-                                <Link
-                                    href={`/admin/events/${e.id}`}
-                                    className="font-semibold underline-offset-4 hover:underline"
-                                >
-                                    {e.title}
-                                </Link>
-                                <p className="mt-0.5 truncate text-[14.5px] text-muted">
-                                    {e.category} | {whenLabel(e)} | {e.price ?? "No price set"}
-                                </p>
+                            <div className="flex min-w-0 items-center gap-3 sm:flex-1">
+                                <span
+                                    className={`size-2.5 shrink-0 rounded-full ${STATUS_DOT[e.status] ?? "bg-dim"}`}
+                                    title={STATUS_LABEL[e.status] ?? e.status}
+                                />
+                                <div className="min-w-0 flex-1">
+                                    <Link
+                                        href={`/admin/events/${e.id}`}
+                                        className="font-semibold underline-offset-4 hover:underline"
+                                    >
+                                        {e.title}
+                                    </Link>
+                                    <p className="mt-0.5 truncate text-[14.5px] text-muted">
+                                        {e.category} | {whenLabel(e)} | {e.price ?? "No price set"}
+                                    </p>
+                                </div>
                             </div>
 
                             <div className="flex flex-wrap items-center gap-2">
@@ -83,8 +85,8 @@ export default async function AdminEventsPage() {
                                             type="submit"
                                             disabled={e.status === s}
                                             className={`min-h-9 rounded-full border px-3.5 text-[14px] transition-colors ${e.status === s
-                                                    ? "border-cream bg-cream font-medium text-[#1b1630]"
-                                                    : "border-line-strong text-muted hover:text-cream"
+                                                ? "border-cream bg-cream font-medium text-[#1b1630]"
+                                                : "border-line-strong text-muted hover:text-cream"
                                                 }`}
                                         >
                                             {STATUS_LABEL[s]}
@@ -93,20 +95,20 @@ export default async function AdminEventsPage() {
                                 ))}
                                 {e.status === "published" && (
 
-                                <a    href = {`/events/${e.slug}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="min-h-9 rounded-full border border-line-strong px-3.5 py-1.5 text-[14px] text-muted transition-colors hover:text-cream"
-                                >
-                                View
-                            </a>
-                )}
-                        </div>
-            </li>
-            ))}
-        </ul>
-    )
-}
-    </div >
-  );
+                                    <a href={`/events/${e.slug}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="min-h-9 rounded-full border border-line-strong px-3.5 py-1.5 text-[14px] text-muted transition-colors hover:text-cream"
+                                    >
+                                        View
+                                    </a>
+                                )}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )
+            }
+        </div >
+    );
 }
