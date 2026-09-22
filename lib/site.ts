@@ -10,8 +10,8 @@ export const SITE = {
 
 export const NAV_LINKS = [
     { href: "/events", label: "Events" },
-    { href: "/events/the-great-lake-escape", label: "Great Lake Escape" },
     { href: "/corporate", label: "Corporate" },
+    { href: "/coloring-books", label: "Coloring books" },
     { href: "/about", label: "About" },
     { href: "/gallery", label: "Gallery" },
     { href: "/contact", label: "Contact" },
