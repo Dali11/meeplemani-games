@@ -37,6 +37,9 @@ export type EventFormDefaults = {
     schedule: { day: string; items: string[] }[];
     faq: { q: string; a: string }[];
     galleryImages: string[];
+    organizerName: string;
+    organizerBio: string;
+    organizerTags: string[];
     status: string;
     sortOrder: number | null;
 };
@@ -240,6 +243,50 @@ export function EventForm({ defaults }: { defaults: EventFormDefaults }) {
                         initialUrls={defaults.galleryImages}
                         multiple
                         max={12}
+                    />
+                </Field>
+            </section>
+
+            <section className="grid gap-5">
+                <h2 className="text-lg font-semibold">About the organizer</h2>
+                <p className="-mt-2 text-[14px] text-dim">
+                    Shown on the event page, between the schedule and the questions.
+                    Leave this blank to hide the section.
+                </p>
+                <Field
+                    id="organizerName"
+                    label="Organizer name"
+                    error={errors.organizerName}
+                    hint='For example "MeepleMania Games" or a partner organization.'
+                >
+                    <input
+                        id="organizerName"
+                        name="organizerName"
+                        defaultValue={defaults.organizerName}
+                        className={inputClass}
+                    />
+                </Field>
+                <Field id="organizerBio" label="About them" error={errors.organizerBio}>
+                    <textarea
+                        id="organizerBio"
+                        name="organizerBio"
+                        rows={4}
+                        defaultValue={defaults.organizerBio}
+                        className={`${inputClass} resize-y`}
+                    />
+                </Field>
+                <Field
+                    id="organizerTags"
+                    label="Tags (one per line)"
+                    error={errors.organizerTags}
+                    hint='For example "Board Games", "Team Building", "Family Friendly".'
+                >
+                    <textarea
+                        id="organizerTags"
+                        name="organizerTags"
+                        rows={3}
+                        defaultValue={defaults.organizerTags.join("\n")}
+                        className={`${inputClass} resize-y`}
                     />
                 </Field>
             </section>

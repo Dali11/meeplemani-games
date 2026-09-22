@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Pill } from "@/components/ui/Pill";
-import { getEventBySlug, getPublishedEvents } from "@/lib/queries";
+import { SimilarEvents } from "@/components/events/SimilarEvents";
+import { getEventBySlug, getPublishedEvents, getSimilarEvents } from "@/lib/queries";
+import { toCardData } from "@/lib/event-view";
 import { whatsappLink } from "@/lib/site";
 
 // Refresh from the database at most every 5 minutes
@@ -80,6 +82,9 @@ export default async function EventPage({ params }: Props) {
     const schedule = event.schedule ?? [];
     const faq = event.faq ?? [];
     const gallery = event.galleryImages ?? [];
+    const organizerTags = event.organizerTags ?? [];
+
+    const similarEvents = (await getSimilarEvents(event.category, event.slug)).map(toCardData);
 
     return (
         <article className="wrap py-10 lg:py-16">
@@ -170,27 +175,31 @@ export default async function EventPage({ params }: Props) {
                         </section>
                     )}
 
-                    {gallery.length > 0 && (
-                        <section aria-labelledby="gallery-title">
-                            <h2 id="gallery-title" className="text-2xl font-semibold tracking-tight">
-                                Photos
+                    {(event.organizerName || event.organizerBio || organizerTags.length > 0) && (
+                        <section aria-labelledby="organizer-title">
+                            <h2 id="organizer-title" className="text-2xl font-semibold tracking-tight">
+                                About the Organizer
                             </h2>
-                            <div className="mt-5 grid grid-cols-2 gap-3">
-                                {gallery.map((src) => (
-                                    <div
-                                        key={src}
-                                        className="relative aspect-4/3 overflow-hidden rounded-2xl bg-plum"
-                                    >
-                                        <Image
-                                            src={src}
-                                            alt=""
-                                            fill
-                                            sizes="(min-width: 1024px) 300px, 45vw"
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
+                            {event.organizerName && (
+                                <p className="mt-3 text-lg font-semibold">{event.organizerName}</p>
+                            )}
+                            {event.organizerBio && (
+                                <p className="mt-3 max-w-2xl whitespace-pre-wrap text-[16.5px] text-muted">
+                                    {event.organizerBio}
+                                </p>
+                            )}
+                            {organizerTags.length > 0 && (
+                                <ul className="mt-5 flex flex-wrap gap-2">
+                                    {organizerTags.map((tag) => (
+                                        <li
+                                            key={tag}
+                                            className="rounded-full border border-line-strong bg-white/5 px-3.5 py-1.5 font-meta text-[13.5px] text-cream"
+                                        >
+                                            {tag}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </section>
                     )}
 
@@ -218,6 +227,30 @@ export default async function EventPage({ params }: Props) {
                                         </summary>
                                         <p className="mt-3 max-w-2xl text-[16.5px] text-muted">{item.a}</p>
                                     </details>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {gallery.length > 0 && (
+                        <section aria-labelledby="gallery-title">
+                            <h2 id="gallery-title" className="text-2xl font-semibold tracking-tight">
+                                Photos
+                            </h2>
+                            <div className="mt-5 grid grid-cols-2 gap-3">
+                                {gallery.map((src) => (
+                                    <div
+                                        key={src}
+                                        className="relative aspect-4/3 overflow-hidden rounded-2xl bg-plum"
+                                    >
+                                        <Image
+                                            src={src}
+                                            alt=""
+                                            fill
+                                            sizes="(min-width: 1024px) 300px, 45vw"
+                                            className="object-cover"
+                                        />
+                                    </div>
                                 ))}
                             </div>
                         </section>
@@ -290,6 +323,8 @@ export default async function EventPage({ params }: Props) {
                     </div>
                 </aside>
             </div>
+
+            <SimilarEvents events={similarEvents} />
         </article>
     );
 }

@@ -24,6 +24,7 @@ export default async function NewEventPage() {
                         schedule: [],
                         faq: [],
                         galleryImages: [],
+                        organizerTags: [],
                         sortOrder: null,
                     }}
                 />

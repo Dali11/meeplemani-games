@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { EVENTS, type EventCategory, type EventItem } from "@/lib/events";
 import { events, galleryImages, type EventRow } from "@/db/schema";
@@ -21,6 +21,29 @@ export async function getEventBySlug(slug: string) {
         .limit(1);
     const event = rows[0];
     return event && event.status === "published" ? event : null;
+}
+
+/**
+ * Other published events to show on an event page, for the "Similar events" section.
+ * Prefers the same category, then fills any remaining spots with other published events.
+ */
+export async function getSimilarEvents(
+    category: string | null,
+    excludeSlug: string,
+    limit = 3,
+): Promise<EventRow[]> {
+    const others = await db
+        .select()
+        .from(events)
+        .where(and(eq(events.status, "published"), ne(events.slug, excludeSlug)))
+        .orderBy(asc(events.sortOrder));
+
+    const sameCategory = category
+        ? others.filter((e) => e.category === category)
+        : [];
+    const rest = others.filter((e) => !sameCategory.includes(e));
+
+    return [...sameCategory, ...rest].slice(0, limit);
 }
 
 // The category text saved in the database, matched to the keys the site uses

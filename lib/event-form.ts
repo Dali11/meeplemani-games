@@ -30,6 +30,9 @@ export type EventFormValues = {
     galleryImages: string; // one per line
     schedule: { day: string; items: string }[]; // items: one per line
     faq: { q: string; a: string }[];
+    organizerName: string;
+    organizerBio: string;
+    organizerTags: string; // one per line
     status: string;
     sortOrder: string;
 };
@@ -50,6 +53,9 @@ export type ParsedEvent = {
     schedule: { day: string; items: string[] }[] | null;
     faq: { q: string; a: string }[] | null;
     galleryImages: string[] | null;
+    organizerName: string | null;
+    organizerBio: string | null;
+    organizerTags: string[] | null;
     status: string;
     sortOrder: number | null;
 };
@@ -69,6 +75,9 @@ export const emptyEventForm: EventFormValues = {
     galleryImages: "",
     schedule: [],
     faq: [],
+    organizerName: "",
+    organizerBio: "",
+    organizerTags: "",
     status: "draft",
     sortOrder: "",
 };
@@ -143,6 +152,9 @@ export function readEventForm(fd: FormData): EventFormValues {
         galleryImages: String(fd.get("galleryImages") ?? ""),
         schedule: days.map((day, i) => ({ day: day.trim(), items: dayItems[i] ?? "" })),
         faq: questions.map((q, i) => ({ q: q.trim(), a: (answers[i] ?? "").trim() })),
+        organizerName: text("organizerName"),
+        organizerBio: text("organizerBio"),
+        organizerTags: String(fd.get("organizerTags") ?? ""),
         status: text("status"),
         sortOrder: text("sortOrder"),
     };
@@ -224,6 +236,17 @@ export function parseEventForm(v: EventFormValues): {
     }
     if (faq.length > 15) errors.faq = "Please keep it to 15 questions.";
 
+    if (v.organizerName.length > 120) {
+        errors.organizerName = "Please keep the organizer's name under 120 characters.";
+    }
+    if (v.organizerBio.length > 1200) {
+        errors.organizerBio = "Please keep the organizer bio under 1200 characters.";
+    }
+    const organizerTags = lines(v.organizerTags);
+    if (organizerTags.length > 8 || organizerTags.some((t) => t.length > 40)) {
+        errors.organizerTags = "Up to 8 tags, each under 40 characters.";
+    }
+
     if (!EVENT_STATUSES.some((s) => s.value === v.status)) {
         errors.status = "Please choose a status.";
     }
@@ -254,6 +277,9 @@ export function parseEventForm(v: EventFormValues): {
             schedule: schedule.length ? schedule : null,
             faq: faq.length ? faq : null,
             galleryImages: gallery.length ? gallery : null,
+            organizerName: v.organizerName || null,
+            organizerBio: v.organizerBio || null,
+            organizerTags: organizerTags.length ? organizerTags : null,
             status: v.status,
             sortOrder,
         },
