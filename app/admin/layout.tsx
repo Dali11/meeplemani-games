@@ -16,8 +16,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     return (
         <div className="min-h-dvh">
             <div className="border-b border-line bg-plum/60">
-                <div className="wrap flex h-14 items-center justify-between gap-4">
-                    <div className="flex items-center gap-6">
+                <div className="wrap flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3 sm:h-14 sm:py-0">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                         <span className="font-semibold">MeepleMania admin</span>
                         {signedIn && (
                             <nav aria-label="Admin" className="flex gap-4 text-[15px]">
