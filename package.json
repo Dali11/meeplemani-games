@@ -10,7 +10,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx --env-file=.env.local db/seed.ts",
-    "db:seed:gallery": "tsx --env-file=.env.local db/seed-gallery.ts"
+    "db:seed:gallery": "tsx --env-file=.env.local db/seed-gallery.ts",
+    "db:seed:coloring": "tsx --env-file=.env.local db/seed-coloring.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1137.0",

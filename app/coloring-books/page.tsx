@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Pill } from "@/components/ui/Pill";
-
+import { getColoringCategories } from "@/lib/queries";
 import { whatsappLink } from "@/lib/site";
-import { COLORING_CATEGORIES } from "@/db/coloring-books";
 
 export const metadata: Metadata = {
     title: "Coloring books",
     description:
         "Free printable coloring pages for kids, inspired by MeepleMania game nights, Lake Malawi adventures and our Kids Fun Day events.",
 };
+
+// Refresh from the database at most every 5 minutes
+export const revalidate = 300;
+
+const FALLBACK_IMAGE = "/images/bg-home-hero.jpg";
 
 function DownloadIcon() {
     return (
@@ -28,7 +32,9 @@ function DownloadIcon() {
     );
 }
 
-export default function ColoringBooksPage() {
+export default async function ColoringBooksPage() {
+    const categories = await getColoringCategories().catch(() => []);
+
     return (
         <>
             <section className="border-b border-line py-14 lg:py-20">
@@ -54,52 +60,60 @@ export default function ColoringBooksPage() {
                         Pick a set
                     </h2>
 
-                    <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                        {COLORING_CATEGORIES.map((category) => (
-                            <div
-                                key={category.slug}
-                                className="flex flex-col overflow-hidden rounded-[22px] border border-line bg-plum"
-                            >
-                                <div className="relative aspect-4/3 bg-ink">
-                                    <Image
-                                        src={category.image}
-                                        alt=""
-                                        fill
-                                        sizes="(min-width: 1024px) 280px, 45vw"
-                                        className="object-cover"
-                                    />
-                                </div>
-                                <div className="flex flex-1 flex-col gap-3 p-5">
-                                    <div>
-                                        <h3 className="text-lg font-semibold tracking-tight">
-                                            {category.title}
-                                        </h3>
-                                        <p className="mt-1.5 text-[15px] text-muted">
-                                            {category.description}
-                                        </p>
+                    {categories.length === 0 ? (
+                        <p className="mt-8 rounded-2xl border border-dashed border-line-strong p-8 text-muted">
+                            Coloring pages are on the way. Check back soon.
+                        </p>
+                    ) : (
+                        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                            {categories.map((category) => (
+                                <div
+                                    key={category.id}
+                                    className="flex flex-col overflow-hidden rounded-[22px] border border-line bg-plum"
+                                >
+                                    <div className="relative aspect-4/3 bg-ink">
+                                        <Image
+                                            src={category.imageUrl ?? FALLBACK_IMAGE}
+                                            alt=""
+                                            fill
+                                            sizes="(min-width: 1024px) 280px, 45vw"
+                                            className="object-cover"
+                                        />
                                     </div>
+                                    <div className="flex flex-1 flex-col gap-3 p-5">
+                                        <div>
+                                            <h3 className="text-lg font-semibold tracking-tight">
+                                                {category.title}
+                                            </h3>
+                                            {category.description && (
+                                                <p className="mt-1.5 text-[15px] text-muted">
+                                                    {category.description}
+                                                </p>
+                                            )}
+                                        </div>
 
-                                    <div className="mt-auto pt-2">
-                                        {category.downloadUrl ? (
-                                            <Pill
-                                                href={category.downloadUrl}
-                                                variant="ghost"
-                                                size="sm"
-                                                className="w-full"
-                                            >
-                                                <DownloadIcon />
-                                                Download PDF
-                                            </Pill>
-                                        ) : (
-                                            <span className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-dashed border-line-strong px-4.5 text-[15px] text-dim">
-                                                Coming soon
-                                            </span>
-                                        )}
+                                        <div className="mt-auto pt-2">
+                                            {category.downloadUrl ? (
+                                                <Pill
+                                                    href={category.downloadUrl}
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="w-full"
+                                                >
+                                                    <DownloadIcon />
+                                                    Download PDF
+                                                </Pill>
+                                            ) : (
+                                                <span className="inline-flex min-h-10 w-full items-center justify-center rounded-full border border-dashed border-line-strong px-4.5 text-[15px] text-dim">
+                                                    Coming soon
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -115,7 +129,7 @@ export default function ColoringBooksPage() {
                         </p>
                     </div>
                     <Pill
-                     href={whatsappLink("Hi MeepleMania, I'd like printed coloring books for an event.")}
+                        href={whatsappLink("Hi MeepleMania, I'd like printed coloring books for an event.")}
                         variant="wa"
                         className="w-full lg:w-auto"
                     >
