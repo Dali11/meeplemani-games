@@ -10,6 +10,19 @@ export const COLORING_STATUSES = [
     { value: "draft", label: "Draft (hidden while you prepare it)" },
 ] as const;
 
+export const COLORING_DIFFICULTIES = [
+    { value: "", label: "Not set" },
+    { value: "easy", label: "Easy" },
+    { value: "medium", label: "Medium" },
+    { value: "detailed", label: "Detailed" },
+] as const;
+
+export const COLORING_BADGES = [
+    { value: "", label: "No badge" },
+    { value: "new", label: "New" },
+    { value: "popular", label: "Popular" },
+] as const;
+
 export type ColoringFormValues = {
     title: string;
     slug: string;
@@ -18,6 +31,11 @@ export type ColoringFormValues = {
     downloadUrl: string;
     status: string;
     sortOrder: string;
+    ageRange: string;
+    pageCount: string;
+    difficulty: string;
+    badge: string;
+    priceMwk: string;
 };
 
 export type ParsedColoringCategory = {
@@ -28,6 +46,11 @@ export type ParsedColoringCategory = {
     downloadUrl: string | null;
     status: string;
     sortOrder: number | null;
+    ageRange: string | null;
+    pageCount: number | null;
+    difficulty: string | null;
+    badge: string | null;
+    priceMwk: number | null;
 };
 
 export const emptyColoringForm: ColoringFormValues = {
@@ -38,6 +61,11 @@ export const emptyColoringForm: ColoringFormValues = {
     downloadUrl: "",
     status: "draft",
     sortOrder: "",
+    ageRange: "",
+    pageCount: "",
+    difficulty: "",
+    badge: "",
+    priceMwk: "",
 };
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -65,6 +93,11 @@ export function readColoringForm(fd: FormData): ColoringFormValues {
         downloadUrl: text("downloadUrl"),
         status: text("status"),
         sortOrder: text("sortOrder"),
+        ageRange: text("ageRange"),
+        pageCount: text("pageCount"),
+        difficulty: text("difficulty"),
+        badge: text("badge"),
+        priceMwk: text("priceMwk"),
     };
 }
 
@@ -106,6 +139,36 @@ export function parseColoringForm(v: ColoringFormValues): {
         else errors.sortOrder = "Please enter a whole number, for example 3.";
     }
 
+    if (v.ageRange.length > 20) {
+        errors.ageRange = "Keep this short, for example 3–6 or 8+.";
+    }
+
+    let pageCount: number | null = null;
+    if (v.pageCount !== "") {
+        if (/^\d{1,3}$/.test(v.pageCount) && Number(v.pageCount) > 0) {
+            pageCount = Number(v.pageCount);
+        } else {
+            errors.pageCount = "Please enter a whole number of pages, for example 8.";
+        }
+    }
+
+    if (!COLORING_DIFFICULTIES.some((d) => d.value === v.difficulty)) {
+        errors.difficulty = "Please choose a difficulty.";
+    }
+
+    if (!COLORING_BADGES.some((b) => b.value === v.badge)) {
+        errors.badge = "Please choose a badge.";
+    }
+
+    let priceMwk: number | null = null;
+    if (v.priceMwk !== "") {
+        if (/^\d{1,9}$/.test(v.priceMwk) && Number(v.priceMwk) > 0) {
+            priceMwk = Number(v.priceMwk);
+        } else {
+            errors.priceMwk = "Please enter a whole number in MWK, or leave blank if it's free.";
+        }
+    }
+
     if (Object.keys(errors).length > 0) return { data: null, errors };
 
     return {
@@ -118,6 +181,11 @@ export function parseColoringForm(v: ColoringFormValues): {
             downloadUrl: v.downloadUrl || null,
             status: v.status,
             sortOrder,
+            ageRange: v.ageRange || null,
+            pageCount,
+            difficulty: v.difficulty || null,
+            badge: v.badge || null,
+            priceMwk,
         },
     };
 }

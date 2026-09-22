@@ -136,6 +136,12 @@ export const coloringCategories = pgTable(
         downloadUrl: text("download_url"),
         status: text("status").notNull().default("draft"),
         sortOrder: integer("sort_order").notNull().default(0),
+        // Store-style catalog fields
+        ageRange: text("age_range"), // e.g. "3–6"
+        pageCount: integer("page_count"),
+        difficulty: text("difficulty"), // "easy" | "medium" | "detailed"
+        badge: text("badge"), // "new" | "popular" | null
+        priceMwk: integer("price_mwk"), // null or 0 = free
         ...timestamps,
     },
     (t) => [
