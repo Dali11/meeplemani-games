@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { events, inquiries } from "@/db/schema";
+import { coloringCategories, events, inquiries } from "@/db/schema";
 export const STATUSES = ["new", "contacted", "done"] as const;
 export type InquiryStatus = (typeof STATUSES)[number];
 
@@ -65,5 +65,26 @@ export type AdminEventRow = Awaited<ReturnType<typeof listAllEvents>>[number];
 
 export async function getEventById(id: string) {
     const rows = await db.select().from(events).where(eq(events.id, id)).limit(1);
+    return rows[0] ?? null;
+}
+
+/** Every coloring category, including drafts, for the admin list */
+export async function listAllColoringCategories() {
+    return db
+        .select()
+        .from(coloringCategories)
+        .orderBy(asc(coloringCategories.sortOrder), asc(coloringCategories.title));
+}
+
+export type AdminColoringCategoryRow = Awaited<
+    ReturnType<typeof listAllColoringCategories>
+>[number];
+
+export async function getColoringCategoryById(id: string) {
+    const rows = await db
+        .select()
+        .from(coloringCategories)
+        .where(eq(coloringCategories.id, id))
+        .limit(1);
     return rows[0] ?? null;
 }

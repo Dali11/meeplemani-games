@@ -1,7 +1,7 @@
 import { and, asc, eq, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { EVENTS, type EventCategory, type EventItem } from "@/lib/events";
-import { events, galleryImages, type EventRow } from "@/db/schema";
+import { coloringCategories, events, galleryImages, type EventRow } from "@/db/schema";
 
 /** Events shown on the public site, in the order set by sort_order */
 export async function getPublishedEvents() {
@@ -102,4 +102,13 @@ export async function getGalleryImages() {
         .from(galleryImages)
         .where(eq(galleryImages.status, "published"))
         .orderBy(asc(galleryImages.sortOrder));
+}
+
+/** Coloring categories for the coloring books page, in the order set by sort_order */
+export async function getColoringCategories() {
+    return db
+        .select()
+        .from(coloringCategories)
+        .where(eq(coloringCategories.status, "published"))
+        .orderBy(asc(coloringCategories.sortOrder));
 }

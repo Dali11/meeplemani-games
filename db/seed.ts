@@ -39,6 +39,10 @@ const rows: NewEventRow[] = [
             { q: "Can I pay in installments?", a: "Yes, 3 installments are available. Contact us on WhatsApp to arrange a payment plan." },
         ],
         galleryImages: ["/images/gle-hero-beach.jpg", "/images/gle-lakeside-group.jpg"],
+        organizerName: "Legendary Adventures",
+        organizerBio:
+            "This trip is co-hosted with Legendary Adventures, our partner for transport and the beachfront stay in Mangochi. They handle the road logistics and the lakeside resort, while MeepleMania Games brings the games, the tournaments and the hosting.",
+        organizerTags: ["Transport", "Beachfront Accommodation", "Lake Malawi Specialists"],
         status: "published",
         sortOrder: 1,
     },

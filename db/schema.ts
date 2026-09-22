@@ -125,5 +125,27 @@ export const loginAttempts = pgTable(
 );
 
 
+export const coloringCategories = pgTable(
+    "coloring_categories",
+    {
+        id: uuid("id").primaryKey().defaultRandom(),
+        title: text("title").notNull(),
+        slug: text("slug").notNull().unique(),
+        description: text("description"),
+        imageUrl: text("image_url"),
+        downloadUrl: text("download_url"),
+        status: text("status").notNull().default("draft"),
+        sortOrder: integer("sort_order").notNull().default(0),
+        ...timestamps,
+    },
+    (t) => [
+        index("idx_coloring_categories_status").on(t.status),
+        index("idx_coloring_categories_sort_order").on(t.sortOrder),
+    ],
+);
+
+
 export type EventRow = typeof events.$inferSelect;
 export type NewEventRow = typeof events.$inferInsert;
+export type ColoringCategoryRow = typeof coloringCategories.$inferSelect;
+export type NewColoringCategoryRow = typeof coloringCategories.$inferInsert;

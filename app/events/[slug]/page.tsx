@@ -6,7 +6,7 @@ import { Pill } from "@/components/ui/Pill";
 import { SimilarEvents } from "@/components/events/SimilarEvents";
 import { getEventBySlug, getPublishedEvents, getSimilarEvents } from "@/lib/queries";
 import { toCardData } from "@/lib/event-view";
-import { whatsappLink } from "@/lib/site";
+import { SITE, whatsappLink } from "@/lib/site";
 
 // Refresh from the database at most every 5 minutes
 export const revalidate = 300;
@@ -73,6 +73,15 @@ function TicketIcon() {
     );
 }
 
+function PartnerIcon({ className = "size-4 shrink-0 stroke-cream" }: { className?: string }) {
+    return (
+        <svg viewBox="0 0 24 24" className={className} {...iconProps} aria-hidden="true">
+            <circle cx="9" cy="12" r="6.5" />
+            <circle cx="15" cy="12" r="6.5" />
+        </svg>
+    );
+}
+
 export default async function EventPage({ params }: Props) {
     const { slug } = await params;
     const event = await getEventBySlug(slug);
@@ -85,6 +94,9 @@ export default async function EventPage({ params }: Props) {
     const organizerTags = event.organizerTags ?? [];
 
     const similarEvents = (await getSimilarEvents(event.category, event.slug)).map(toCardData);
+
+    // The "organizer" fields double as a co-host callout when they name someone other than us
+    const isPartnerEvent = Boolean(event.organizerName && event.organizerName !== SITE.name);
 
     return (
         <article className="wrap py-10 lg:py-16">
@@ -122,6 +134,14 @@ export default async function EventPage({ params }: Props) {
                     {event.title}
                 </h1>
                 <p className="mt-4 text-lg text-muted">{event.description}</p>
+                {isPartnerEvent && (
+                    <a
+                        href="#organizer-title"
+                        className="mt-4 inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/5 px-3.5 py-1.5 font-meta text-[13.5px] text-cream transition-colors hover:bg-white/10"
+                    >
+                        <PartnerIcon />A trip co-hosted with {event.organizerName}
+                    </a>
+                )}
             </header>
 
             <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_380px] lg:items-start lg:gap-14">
@@ -178,7 +198,7 @@ export default async function EventPage({ params }: Props) {
                     {(event.organizerName || event.organizerBio || organizerTags.length > 0) && (
                         <section aria-labelledby="organizer-title">
                             <h2 id="organizer-title" className="text-2xl font-semibold tracking-tight">
-                                About the Organizer
+                                {isPartnerEvent ? "In Partnership With" : "About the Organizer"}
                             </h2>
                             {event.organizerName && (
                                 <p className="mt-3 text-lg font-semibold">{event.organizerName}</p>
@@ -298,6 +318,13 @@ export default async function EventPage({ params }: Props) {
                     {event.priceNote && (
                         <p className="mt-2 pl-7 font-meta text-[13.5px] text-muted">
                             {event.priceNote}
+                        </p>
+                    )}
+
+                    {isPartnerEvent && (
+                        <p className="mt-4 flex items-center gap-2 border-t border-line pt-4 font-meta text-[13.5px] text-muted">
+                            <PartnerIcon className="size-4 shrink-0 stroke-dim" />
+                            Co-hosted with <span className="text-cream">{event.organizerName}</span>
                         </p>
                     )}
 
