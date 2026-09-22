@@ -24,6 +24,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
                                 <Link href="/admin" className="text-cream">
                                     Inbox
                                 </Link>
+                                <Link href="/admin/events" className="text-cream">
+                                    Events
+                                </Link>
                             </nav>
                         )}
                     </div>

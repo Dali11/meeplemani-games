@@ -1,7 +1,6 @@
-import { and, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
-import { inquiries } from "@/db/schema";
-
+import { events, inquiries } from "@/db/schema";
 export const STATUSES = ["new", "contacted", "done"] as const;
 export type InquiryStatus = (typeof STATUSES)[number];
 
@@ -55,4 +54,16 @@ export async function countByStatus() {
         }
     }
     return counts;
+}
+
+/** Every event, including drafts and archived ones, for the admin list */
+export async function listAllEvents() {
+    return db.select().from(events).orderBy(asc(events.sortOrder), asc(events.title));
+}
+
+export type AdminEventRow = Awaited<ReturnType<typeof listAllEvents>>[number];
+
+export async function getEventById(id: string) {
+    const rows = await db.select().from(events).where(eq(events.id, id)).limit(1);
+    return rows[0] ?? null;
 }
